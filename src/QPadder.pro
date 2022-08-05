@@ -30,6 +30,14 @@ HEADERS += \
     targetver.h
 }
 
+linux: {
+SOURCES += \
+    linuxcontroller.cpp
+
+HEADERS += \
+    linuxcontroller.h
+}
+
 FORMS += \
     mainwindow.ui
 

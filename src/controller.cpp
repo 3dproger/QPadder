@@ -1,6 +1,8 @@
 #include "controller.h"
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN)
 #include "winapicontroller.h"
+#elif defined(Q_OS_LINUX)
+#include "linuxcontroller.h"
 #endif
 #include <QGamepadManager>
 #include <QCursor>
@@ -10,8 +12,10 @@
 
 Controller::Controller(QObject *parent)
     : QObject{parent}
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN)
     , platform(*new WinapiController())
+#elif defined(Q_OS_LINUX)
+    , platform(*new LinuxController())
 #endif
 {
     connect(QGamepadManager::instance(), &QGamepadManager::gamepadConnected, this, &Controller::onGamepadConnected);
