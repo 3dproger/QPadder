@@ -5,6 +5,9 @@
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setApplicationName("QPadder");
+    QCoreApplication::setOrganizationName("3dproger_axel_k");
+
     QApplication a(argc, argv);
 
     QTranslator translator;

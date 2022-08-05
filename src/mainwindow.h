@@ -23,6 +23,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QLabel* labelStatus = new QLabel(this);
-    Controller controller;
+    QSettings settings;
+    Controller* controller = nullptr;
 };
 #endif // MAINWINDOW_H

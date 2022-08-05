@@ -39,8 +39,9 @@ int qtMouseButtonToIntMouseButton(Qt::MouseButton button, bool& ok)
 
 }
 
-Controller::Controller(QObject *parent)
+Controller::Controller(QSettings& settings_, QObject *parent)
     : QObject{parent}
+    , settings(settings_)
 #if defined(Q_OS_WIN)
     , platform(*new WinapiController())
 #elif defined(Q_OS_LINUX)
@@ -55,8 +56,6 @@ Controller::Controller(QObject *parent)
     timerUpdateFrame.start();
 
     updateGamepadsConnection();
-
-    emit gamepadsChanged();
 }
 
 void Controller::updateFrame()
