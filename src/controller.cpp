@@ -24,6 +24,8 @@ Controller::Controller(QObject *parent)
     timerUpdateFrame.setInterval(16);
     connect(&timerUpdateFrame, &QTimer::timeout, this, &Controller::updateFrame);
     timerUpdateFrame.start();
+
+    updateGamepadsConnection();
 }
 
 void Controller::updateFrame()
@@ -40,6 +42,26 @@ void Controller::updateFrame()
         if (wheelSpeed.manhattanLength() != 0.0)
         {
             platform.sendMouseWheelEvent(wheelSpeed);
+        }
+    }
+}
+
+void Controller::updateGamepadsConnection()
+{
+    const QList<int> ids = QGamepadManager::instance()->connectedGamepads();
+    for (const int id : ids)
+    {
+        if (!gamepads.contains(id))
+        {
+            onGamepadConnected(id);
+        }
+    }
+
+    for (auto it = gamepads.begin(); it != gamepads.end(); ++it)
+    {
+        if (!ids.contains(it.key()))
+        {
+            onGamepadDisconnected(it.key());
         }
     }
 }

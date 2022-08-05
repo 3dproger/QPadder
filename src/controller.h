@@ -16,6 +16,7 @@ signals:
 private slots:
     void updateFrame();
 
+    void updateGamepadsConnection();
     void onGamepadConnected(int deviceId);
     void onGamepadDisconnected(int deviceId);
 
