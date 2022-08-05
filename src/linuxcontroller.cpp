@@ -78,7 +78,7 @@ void LinuxController::sendMouseButtonEvent(int button_, bool down)
     }
 }
 
-void LinuxController::sendMouseWheelEvent(double x, double y)
+void LinuxController::sendMouseWheelEvent(double, double y)
 {
     if (!display)
     {
@@ -86,31 +86,37 @@ void LinuxController::sendMouseWheelEvent(double x, double y)
         return;
     }
 
-    /*XEvent event;
-    memset (&event, 0, sizeof (event));
-    event.xbutton.button = WheelUp;
-    event.xbutton.same_screen = true;
-    event.xbutton.subwindow = DefaultRootWindow(display);
-    while (event.xbutton.subwindow)
+    int button = 0;
+
+    if (y > 0)
     {
-        event.xbutton.window = event.xbutton.subwindow;
-        XQueryPointer((Display*)display, event.xbutton.window,
-            &event.xbutton.root, &event.xbutton.subwindow,
-            &event.xbutton.x_root, &event.xbutton.y_root,
-            &event.xbutton.x, &event.xbutton.y,
-            &event.xbutton.state);
+        button = Button5;
+    }
+    else if (y < 0)
+    {
+        button = Button4;
+    }
+    else
+    {
+        return;
     }
 
-    event.type = down ? ButtonPress : ButtonRelease;
-    if (XSendEvent((Display*)display, PointerWindow, True, down ? ButtonPressMask : ButtonReleaseMask, &event) == 0)
+    int ret = XTestFakeButtonEvent((Display*)display, button, true, CurrentTime);
+    XFlush((Display*)display);
+    if (ret != 1)
     {
-        fprintf (stderr, "Error to send the event!\n");
+        fprintf (stderr, "XTestFakeButtonEvent error %d\n", ret);
     }
 
-    XFlush((Display*)display);*/
+    ret = XTestFakeButtonEvent((Display*)display, button, false, CurrentTime);
+    XFlush((Display*)display);
+    if (ret != 1)
+    {
+        fprintf (stderr, "XTestFakeButtonEvent error %d\n", ret);
+    }
 }
 
 bool LinuxController::isHorizontalScrollAvailable() const
 {
-    return false;//TODO
+    return false;
 }
