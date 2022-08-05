@@ -6,9 +6,9 @@
 class WinapiController : public AbstractPlatformController
 {
 public:
-    explicit WinapiController();
     void sendMouseButtonEvent(int button, bool down) override;
     void sendMouseWheelEvent(double x, double y) override;
+    bool isHorizontalScrollAvailable() const;
 };
 
 #endif // WINAPICONTROLLER_H

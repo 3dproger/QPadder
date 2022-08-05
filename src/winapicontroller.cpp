@@ -63,13 +63,6 @@ DWORD intButtonToWinapiMouseButton(int button, bool down, bool& ok)
 
 }
 
-WinapiController::WinapiController()
-{
-#if _WIN32_WINNT < 0x0600
-    qWarning() << "Horizontal scrolling is not supported for this target Windows version. Check https://docs.microsoft.com/en-us/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170";
-#endif
-}
-
 void WinapiController::sendMouseButtonEvent(int button, bool down)
 {
     POINT pos;
@@ -97,10 +90,19 @@ void WinapiController::sendMouseWheelEvent(double x, double y)
         printError(GetLastError());
     }
 
-#if _WIN32_WINNT >= 0x0600
+#if defined(MOUSEEVENTF_HWHEEL)
     mouse_event(MOUSEEVENTF_HWHEEL, pos.x, pos.y, DWORD(WHEEL_DELTA * x), 0);
 #endif
 
     mouse_event(MOUSEEVENTF_WHEEL, pos.x, pos.y, DWORD(-WHEEL_DELTA * y), 0);
 
+}
+
+bool WinapiController::isHorizontalScrollAvailable() const
+{
+#if defined(MOUSEEVENTF_HWHEEL)
+    return true;
+#else
+    return false;
+#endif
 }

@@ -36,7 +36,7 @@ SOURCES += \
 HEADERS += \
     linuxcontroller.h
 
-LIBS += -L/usr/X11/lib -lX11
+LIBS += -L/usr/X11/lib -L/usr/local/lib -lX11 -lXtst
 }
 
 FORMS += \

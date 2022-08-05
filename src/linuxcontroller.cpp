@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <X11/Xlib.h>
+#include <X11/extensions/XTest.h>
 
 // https://gist.github.com/pioz/726474
 
@@ -69,9 +70,25 @@ void LinuxController::sendMouseButtonEvent(int button_, bool down)
         return;
     }
 
-    XEvent event;
+    const int ret = XTestFakeButtonEvent((Display*)display, button, down, CurrentTime);
+    XFlush((Display*)display);
+    if (ret != 1)
+    {
+        fprintf (stderr, "XTestFakeButtonEvent error %d\n", ret);
+    }
+}
+
+void LinuxController::sendMouseWheelEvent(double x, double y)
+{
+    if (!display)
+    {
+        fprintf (stderr, "Display not opened\n");
+        return;
+    }
+
+    /*XEvent event;
     memset (&event, 0, sizeof (event));
-    event.xbutton.button = button;
+    event.xbutton.button = WheelUp;
     event.xbutton.same_screen = true;
     event.xbutton.subwindow = DefaultRootWindow(display);
     while (event.xbutton.subwindow)
@@ -90,15 +107,10 @@ void LinuxController::sendMouseButtonEvent(int button_, bool down)
         fprintf (stderr, "Error to send the event!\n");
     }
 
-    XFlush((Display*)display);
+    XFlush((Display*)display);*/
 }
 
-void LinuxController::sendMouseWheelEvent(double x, double y)
+bool LinuxController::isHorizontalScrollAvailable() const
 {
-    if (!display)
-    {
-        fprintf (stderr, "Display not opened\n");
-        return;
-    }
-
+    return false;//TODO
 }

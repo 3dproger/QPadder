@@ -10,6 +10,7 @@ public:
     ~LinuxController();
     void sendMouseButtonEvent(int button, bool down) override;
     void sendMouseWheelEvent(double x, double y) override;
+    bool isHorizontalScrollAvailable() const override;
 
 private:
     void* display = nullptr;
