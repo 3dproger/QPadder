@@ -5,14 +5,10 @@
 
 class WinapiController : public AbstractPlatformController
 {
-    Q_OBJECT
 public:
-    explicit WinapiController(QObject *parent = nullptr);
-    void sendMouseButtonEvent(Qt::MouseButton button, bool down) override;
-    void sendMouseWheelEvent(const QPointF &speed) override;
-
-signals:
-
+    explicit WinapiController();
+    void sendMouseButtonEvent(int button, bool down) override;
+    void sendMouseWheelEvent(double x, double y) override;
 };
 
 #endif // WINAPICONTROLLER_H

@@ -36,17 +36,41 @@ void printError(DWORD error)
     LocalFree(messageBuffer);
 }
 
+DWORD intButtonToWinapiMouseButton(int button, bool down, bool& ok)
+{
+    ok = false;
+
+    switch (button)
+    {
+    case AbstractPlatformController::LEFT_BUTTON:
+        ok = true;
+        return down ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP;
+
+    case AbstractPlatformController::MIDDLE_BUTTON:
+        ok = true;
+        return down ? MOUSEEVENTF_MIDDLEDOWN : MOUSEEVENTF_MIDDLEUP;
+
+    case AbstractPlatformController::RIGHT_BUTTON:
+        ok = true;
+        return down ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP;
+
+    default:
+        break;
+    }
+
+    return 0;
 }
 
-WinapiController::WinapiController(QObject *parent)
-    : AbstractPlatformController(parent)
+}
+
+WinapiController::WinapiController()
 {
 #if _WIN32_WINNT < 0x0600
     qWarning() << "Horizontal scrolling is not supported for this target Windows version. Check https://docs.microsoft.com/en-us/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170";
 #endif
 }
 
-void WinapiController::sendMouseButtonEvent(Qt::MouseButton button, bool down)
+void WinapiController::sendMouseButtonEvent(int button, bool down)
 {
     POINT pos;
     if (!GetCursorPos(&pos))
@@ -54,30 +78,18 @@ void WinapiController::sendMouseButtonEvent(Qt::MouseButton button, bool down)
         printError(GetLastError());
     }
 
-    DWORD dwFlags = 0;
-    switch (button)
+    bool ok = false;
+    DWORD dwFlags = intButtonToWinapiMouseButton(button, down, ok);
+    if (!ok)
     {
-    case Qt::LeftButton:
-        dwFlags = down ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP;
-        break;
-
-    case Qt::RightButton:
-        dwFlags = down ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP;
-        break;
-
-    case Qt::MiddleButton:
-        dwFlags = down ? MOUSEEVENTF_MIDDLEDOWN : MOUSEEVENTF_MIDDLEUP;
-        break;
-
-    default:
-        qCritical() << "Unknown mouse button" << button;
+        qCritical() << "Failed to conver int mouse button to winapi mouse button";
         return;
     }
 
     mouse_event(dwFlags, pos.x, pos.y, 0, 0);
 }
 
-void WinapiController::sendMouseWheelEvent(const QPointF &speed)
+void WinapiController::sendMouseWheelEvent(double x, double y)
 {
     POINT pos;
     if (!GetCursorPos(&pos))
@@ -86,9 +98,9 @@ void WinapiController::sendMouseWheelEvent(const QPointF &speed)
     }
 
 #if _WIN32_WINNT >= 0x0600
-    mouse_event(MOUSEEVENTF_HWHEEL, pos.x, pos.y, DWORD(WHEEL_DELTA * speed.x()), 0);
+    mouse_event(MOUSEEVENTF_HWHEEL, pos.x, pos.y, DWORD(WHEEL_DELTA * x), 0);
 #endif
 
-    mouse_event(MOUSEEVENTF_WHEEL, pos.x, pos.y, DWORD(-WHEEL_DELTA * speed.y()), 0);
+    mouse_event(MOUSEEVENTF_WHEEL, pos.x, pos.y, DWORD(-WHEEL_DELTA * y), 0);
 
 }
