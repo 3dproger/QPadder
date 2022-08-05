@@ -14,6 +14,7 @@ public:
 
 private:
     void* display = nullptr;
+    int skipWheelEventSteps = 0;
 };
 
 #endif // LINUXCONTROLLER_H

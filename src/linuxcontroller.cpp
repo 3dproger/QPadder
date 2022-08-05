@@ -80,6 +80,12 @@ void LinuxController::sendMouseButtonEvent(int button_, bool down)
 
 void LinuxController::sendMouseWheelEvent(double, double y)
 {
+    if (skipWheelEventSteps > 0)
+    {
+        skipWheelEventSteps--;
+        return;
+    }
+
     if (!display)
     {
         fprintf (stderr, "Display not opened\n");
@@ -114,6 +120,8 @@ void LinuxController::sendMouseWheelEvent(double, double y)
     {
         fprintf (stderr, "XTestFakeButtonEvent error %d\n", ret);
     }
+
+    skipWheelEventSteps = 10 - y;
 }
 
 bool LinuxController::isHorizontalScrollAvailable() const
