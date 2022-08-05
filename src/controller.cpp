@@ -55,6 +55,8 @@ Controller::Controller(QObject *parent)
     timerUpdateFrame.start();
 
     updateGamepadsConnection();
+
+    emit gamepadsChanged();
 }
 
 void Controller::updateFrame()
@@ -120,6 +122,8 @@ void Controller::onGamepadConnected(int deviceId)
 
         platform.sendMouseButtonEvent(button, down);
     });
+
+    emit gamepadsChanged();
 }
 
 void Controller::onGamepadDisconnected(int deviceId)
@@ -138,4 +142,6 @@ void Controller::onGamepadDisconnected(int deviceId)
     gamepad->deleteLater();
 
     qDebug() << "Disconnected" << deviceId << name;
+
+    emit gamepadsChanged();
 }

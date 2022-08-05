@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "controller.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
@@ -17,8 +16,6 @@ int main(int argc, char *argv[])
             break;
         }
     }
-
-    Controller controller;
 
     MainWindow w;
     w.show();

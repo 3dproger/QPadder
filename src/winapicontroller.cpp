@@ -72,7 +72,7 @@ void WinapiController::sendMouseButtonEvent(int button, bool down)
     }
 
     bool ok = false;
-    DWORD dwFlags = intButtonToWinapiMouseButton(button, down, ok);
+    const DWORD dwFlags = intButtonToWinapiMouseButton(button, down, ok);
     if (!ok)
     {
         qCritical() << "Failed to conver int mouse button to winapi mouse button";

@@ -10,8 +10,10 @@ class Controller : public QObject
     Q_OBJECT
 public:
     explicit Controller(QObject *parent = nullptr);
+    const QMap<int, Gamepad*>& getGamepads() const { return gamepads; }
 
 signals:
+    void gamepadsChanged();
 
 private slots:
     void updateFrame();
