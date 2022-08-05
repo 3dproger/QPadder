@@ -9,7 +9,6 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    abstractplatformcontroller.cpp \
     controller.cpp \
     gamepad.cpp \
     main.cpp \
@@ -36,6 +35,8 @@ SOURCES += \
 
 HEADERS += \
     linuxcontroller.h
+
+LIBS += -L/usr/X11/lib -lX11
 }
 
 FORMS += \

@@ -5,14 +5,14 @@
 
 class LinuxController : public AbstractPlatformController
 {
-    Q_OBJECT
 public:
-    explicit LinuxController(QObject *parent = nullptr);
-    void sendMouseButtonEvent(Qt::MouseButton button, bool down) override;
-    void sendMouseWheelEvent(const QPointF &speed) override;
+    LinuxController();
+    ~LinuxController();
+    void sendMouseButtonEvent(int button, bool down) override;
+    void sendMouseWheelEvent(double x, double y) override;
 
-signals:
-
+private:
+    void* display = nullptr;
 };
 
 #endif // LINUXCONTROLLER_H

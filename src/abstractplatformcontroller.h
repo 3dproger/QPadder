@@ -1,18 +1,16 @@
 #ifndef ABSTRACTPLATFORMCONTROLLER_H
 #define ABSTRACTPLATFORMCONTROLLER_H
 
-#include <QObject>
-#include <QPointF>
-
-class AbstractPlatformController : public QObject
+class AbstractPlatformController
 {
-    Q_OBJECT
 public:
-    explicit AbstractPlatformController(QObject *parent = nullptr);
-    virtual void sendMouseButtonEvent(Qt::MouseButton button, bool down) = 0;
-    virtual void sendMouseWheelEvent(const QPointF& speed) = 0;
+    static const int LEFT_BUTTON = 0;
+    static const int MIDDLE_BUTTON = 1;
+    static const int RIGHT_BUTTON = 2;
 
-signals:
+    explicit AbstractPlatformController(){}
+    virtual void sendMouseButtonEvent(int button, bool down) = 0;
+    virtual void sendMouseWheelEvent(double x, double y) = 0;
 
 };
 

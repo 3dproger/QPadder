@@ -10,6 +10,35 @@
 #include <QMouseEvent>
 #include <QApplication>
 
+namespace
+{
+
+int qtMouseButtonToIntMouseButton(Qt::MouseButton button, bool& ok)
+{
+    ok = false;
+    switch (button)
+    {
+    case Qt::MouseButton::LeftButton:
+        ok = true;
+        return AbstractPlatformController::LEFT_BUTTON;
+
+    case Qt::MouseButton::MiddleButton:
+        ok = true;
+        return AbstractPlatformController::MIDDLE_BUTTON;
+
+    case Qt::MouseButton::RightButton:
+        ok = true;
+        return AbstractPlatformController::RIGHT_BUTTON;
+
+    default:
+        break;
+    }
+
+    return -1;
+}
+
+}
+
 Controller::Controller(QObject *parent)
     : QObject{parent}
 #if defined(Q_OS_WIN)
@@ -41,7 +70,7 @@ void Controller::updateFrame()
         const QPointF wheelSpeed = it.value()->getWheelSpeed();
         if (wheelSpeed.manhattanLength() != 0.0)
         {
-            platform.sendMouseWheelEvent(wheelSpeed);
+            platform.sendMouseWheelEvent(wheelSpeed.x(), wheelSpeed.y());
         }
     }
 }
@@ -79,8 +108,16 @@ void Controller::onGamepadConnected(int deviceId)
 
     qDebug() << "Connected" << deviceId << gamepad->getQGamepad().name();
 
-    connect(gamepad, &Gamepad::mouseButtonChanged, this, [this](Qt::MouseButton button, bool down)
+    connect(gamepad, &Gamepad::mouseButtonChanged, this, [this](Qt::MouseButton button_, bool down)
     {
+        bool ok = false;
+        const auto button = qtMouseButtonToIntMouseButton(button_, ok);
+        if (!ok)
+        {
+            qCritical() << "Failed to convert qt mouse button to int mouse button";
+            return;
+        }
+
         platform.sendMouseButtonEvent(button, down);
     });
 }
